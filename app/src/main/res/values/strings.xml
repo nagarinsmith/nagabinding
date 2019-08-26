@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">nagabinding</string>
+
+    <!--region Content Descriptions-->
+    <string name="cont_desc_avatar">Avatar</string>
+    <!--endregion Content Descriptions-->
+</resources>
