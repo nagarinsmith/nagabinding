@@ -22,5 +22,6 @@
         </activity>
 
         <activity android:name=".main.details.PersonDetailActivity" />
+        <activity android:name=".main.newperson.NewPersonActivity" />
     </application>
 </manifest>

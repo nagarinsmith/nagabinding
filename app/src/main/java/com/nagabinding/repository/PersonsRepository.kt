@@ -2,12 +2,12 @@ package com.nagabinding.repository
 
 import com.nagabinding.model.Person
 import com.nagabinding.model.PersonDetails
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import com.nagabinding.shared.Response
+import kotlinx.coroutines.delay
 
 class PersonsRepository {
 
-    private val personDetails = listOf(
+    private val personDetails = mutableListOf(
         PersonDetails(
             1,
             "Paul-Claudiu Orha",
@@ -34,9 +34,17 @@ class PersonsRepository {
         )
     )
 
-    private val persons = personDetails.map { Person(it.id, it.name, it.avatar) }
+    fun getPersons(): List<Person> = personDetails.map { Person(it.id, it.name, it.avatar) }
 
-    fun getPersons(): Flow<List<Person>> = flowOf(persons)
+    fun getPersonDetailById(id: Int): PersonDetails? = personDetails.firstOrNull { it.id == id }
 
-    fun getPersonDetailById(id: Int): Flow<PersonDetails?> = flowOf(personDetails.firstOrNull { it.id == id })
+    suspend fun savePerson(person: PersonDetails): Response<PersonDetails> {
+        delay(1000) // mocking response time
+        return if (personDetails.firstOrNull { it.phoneNumber == person.phoneNumber } == null) {
+            personDetails.add(person)
+            Response.Success(person)
+        } else {
+            Response.Error(Throwable("Id already found in the database"))
+        }
+    }
 }
