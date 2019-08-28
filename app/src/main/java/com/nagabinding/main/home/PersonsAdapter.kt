@@ -6,10 +6,7 @@ import com.nagabinding.R
 import com.nagabinding.shared.NagaListAdapter
 
 class PersonsAdapter(private val onPersonClicked: (person: PersonItemViewModel) -> Unit) :
-    NagaListAdapter<PersonItemViewModel, PersonItemBinding>(R.layout.item_person, object : DiffUtil.ItemCallback<PersonItemViewModel>() {
-        override fun areItemsTheSame(oldItem: PersonItemViewModel, newItem: PersonItemViewModel) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: PersonItemViewModel, newItem: PersonItemViewModel) = oldItem == newItem
-    }) {
+    NagaListAdapter<PersonItemViewModel, PersonItemBinding>(R.layout.item_person, diffUtil) {
 
     override fun initialize(viewHolder: NagaViewHolder<PersonItemBinding>) {
         viewHolder.binding.container.setOnClickListener { onPersonClicked(getItem(viewHolder.adapterPosition)) }
@@ -17,5 +14,12 @@ class PersonsAdapter(private val onPersonClicked: (person: PersonItemViewModel) 
 
     override fun bind(binding: PersonItemBinding, item: PersonItemViewModel) {
         binding.viewModel = item
+    }
+
+    companion object {
+        private val diffUtil = object : DiffUtil.ItemCallback<PersonItemViewModel>() {
+            override fun areItemsTheSame(oldItem: PersonItemViewModel, newItem: PersonItemViewModel) = oldItem.id == newItem.id
+            override fun areContentsTheSame(oldItem: PersonItemViewModel, newItem: PersonItemViewModel) = oldItem == newItem
+        }
     }
 }
