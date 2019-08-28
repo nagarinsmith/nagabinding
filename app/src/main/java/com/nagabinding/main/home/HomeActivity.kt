@@ -26,11 +26,6 @@ class HomeActivity : NagaActivity<HomeBinding, HomeViewModel>(R.layout.activity_
         viewModel.persons.observe(this, adapter::submitList)
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        viewModel.loadPersons()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?) = consume { menuInflater.inflate(R.menu.new_person, menu) }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {

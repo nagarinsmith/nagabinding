@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.nagabinding.model.Person" />
+            type="com.nagabinding.main.home.PersonItemViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

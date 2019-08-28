@@ -18,9 +18,9 @@ class NewPersonActivity : NagaActivity<NewPersonBinding, NewPersonViewModel>(R.l
         super.onCreate(savedInstanceState)
 
         viewModel.event.observe(this) {
-            when (it) {
+            when (val event = it.consume()) {
                 NewPersonViewModel.Event.Success -> finish()
-                is NewPersonViewModel.Event.Failure -> Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                is NewPersonViewModel.Event.Failure -> Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show()
             }
         }
     }

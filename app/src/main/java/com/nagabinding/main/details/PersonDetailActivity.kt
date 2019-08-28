@@ -10,12 +10,12 @@ import org.koin.core.parameter.parametersOf
 
 class PersonDetailActivity : NagaActivity<PersonDetailBinding, PersonDetailViewModel>(R.layout.activity_person_detail) {
 
-    override val viewModel: PersonDetailViewModel by viewModel { parametersOf(intent.getIntExtra(PERSON_ID, -1)) }
+    override val viewModel: PersonDetailViewModel by viewModel { parametersOf(intent.getStringExtra(PERSON_ID)) }
 
     companion object {
         private const val PERSON_ID = "personId"
 
-        fun getStartIntent(context: Context, personId: Int) = Intent(context, PersonDetailActivity::class.java).also {
+        fun getStartIntent(context: Context, personId: String) = Intent(context, PersonDetailActivity::class.java).also {
             it.putExtra(PERSON_ID, personId)
         }
     }

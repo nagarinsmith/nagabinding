@@ -9,12 +9,17 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
+
+    final stringType = "String"
+    final baseUrlKey = "BASE_URL"
+
     defaultConfig {
         applicationId "com.nagabinding"
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "0.0.1"
+        buildConfigField stringType, baseUrlKey, project.BASE_URL
     }
 
     dataBinding {
@@ -68,4 +73,16 @@ dependencies {
 
     // Coil
     implementation "io.coil-kt:coil:0.6.1"
+
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+
+    // OkHttp
+    implementation "com.squareup.okhttp3:okhttp:4.1.0"
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.13.1'
+
+    // Moshi
+    implementation "com.squareup.moshi:moshi:1.8.0"
+
 }

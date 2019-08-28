@@ -1,17 +1,15 @@
 package com.nagabinding.main.details
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.nagabinding.model.PersonDetails
-import com.nagabinding.repository.PersonsRepository
+import androidx.lifecycle.liveData
+import com.nagabinding.repository.PersonRepository
+import com.nagabinding.shared.Response
 
-class PersonDetailViewModel(private val personId: Int, private val repository: PersonsRepository) : ViewModel() {
+class PersonDetailViewModel(private val personId: String, private val repository: PersonRepository) : ViewModel() {
 
-    private val _person = MutableLiveData<PersonDetails>()
-    val person: LiveData<PersonDetails> get() = _person
-
-    init {
-        _person.value = repository.getPersonDetailById(personId)
+    val person = liveData {
+        when (val response = repository.getPersonById(personId)) {
+            is Response.Success -> emit(response.result)
+        }
     }
 }

@@ -5,17 +5,19 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nagabinding.model.PersonDetails
-import com.nagabinding.repository.PersonsRepository
+import com.nagabinding.model.Person
+import com.nagabinding.repository.PersonRepository
 import com.nagabinding.shared.Response
+import com.nagabinding.shared.event.BaseEvent
+import com.nagabinding.shared.event.EventWrapper
+import com.nagabinding.shared.event.wrap
 import com.nagabinding.shared.util.initialize
 import kotlinx.coroutines.launch
-import java.util.Random
 
-class NewPersonViewModel(private val repository: PersonsRepository) : ViewModel() {
+class NewPersonViewModel(private val repository: PersonRepository) : ViewModel() {
 
-    private val _event = MutableLiveData<Event>()
-    val event: LiveData<Event> get() = _event
+    private val _event = MutableLiveData<EventWrapper<Event>>()
+    val event: LiveData<EventWrapper<Event>> get() = _event
 
     val avatar = MutableLiveData<String>()
     val name = MutableLiveData<String>()
@@ -36,26 +38,23 @@ class NewPersonViewModel(private val repository: PersonsRepository) : ViewModel(
     private val _isLoading = MutableLiveData<Boolean>().initialize(false)
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    private fun validateFields(vararg fields: String?): Boolean = !fields.asSequence().map(String?::isNullOrBlank).any { it }
+    private fun validateFields(vararg fields: String?): Boolean = fields.asSequence().map(String?::isNullOrBlank).all { !it }
 
     fun savePerson() {
-        val avatar = avatar.value
-        val name = name.value
-        val phoneNumber = phoneNumber.value
+        val avatar = avatar.value ?: return
+        val name = name.value ?: return
+        val phoneNumber = phoneNumber.value ?: return
 
         if (validateFields(avatar, name, phoneNumber)) {
             _isLoading.value = true
-            /* This is a huge exception, normally '!!' operator should be prohibited,
-            but in this case I could't write a contract for `validateFields` so the compiler
-             would know that the fields are not null. If you have any idea for a clean approach please tell me :) */
-            val person = PersonDetails(Random().nextInt(), name!!, avatar!!, phoneNumber!!)
+            val person = Person(avatar = avatar, name = name, phoneNumber = phoneNumber)
             viewModelScope.launch {
-                when (val response = repository.savePerson(person)) {
+                when (val response = repository.addPerson(person)) {
                     is Response.Success -> {
-                        _event.value = Event.Success
+                        _event.value = Event.Success.wrap()
                     }
                     is Response.Error -> {
-                        _event.value = Event.Failure(response.throwable.message.orEmpty())
+                        _event.value = Event.Failure(response.throwable.message.orEmpty()).wrap()
                         _isLoading.value = false
                     }
                 }
@@ -63,7 +62,7 @@ class NewPersonViewModel(private val repository: PersonsRepository) : ViewModel(
         }
     }
 
-    sealed class Event {
+    sealed class Event : BaseEvent {
 
         object Success : Event()
         class Failure(val message: String) : Event()
